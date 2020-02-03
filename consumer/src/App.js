@@ -11,7 +11,8 @@ class WebSocketListener extends Component {
       super(props);
 
       this.state = {
-          ws: null
+          ws: null,
+          messages: []
       };
   }
 
@@ -38,6 +39,11 @@ class WebSocketListener extends Component {
 
             this.setState({ ws: ws });
 
+            ws.send('xxx');
+            ws.send('xxx');
+            ws.send('xxx');
+            ws.send('xxx');
+
             that.timeout = 250; // reset timer to 250 on open of websocket connection 
             clearTimeout(connectInterval); // clear Interval on on open of websocket connection
         };
@@ -55,6 +61,12 @@ class WebSocketListener extends Component {
             that.timeout = that.timeout + that.timeout; //increment retry interval
             connectInterval = setTimeout(this.check, Math.min(10000, that.timeout)); //call check function after timeout
         };
+
+        ws.onmessage = messageEvent => {
+          //console.log(messageEvent.data)
+          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data)})
+          console.log(this.state.messages);
+        }
 
         // websocket onerror event listener
         ws.onerror = err => {
@@ -76,10 +88,27 @@ class WebSocketListener extends Component {
         if (!ws || ws.readyState === WebSocket.CLOSED) this.connect(); //check if websocket instance is closed, if so call `connect` function.
     };
 
+    handleStateDisplay = () => {
+      let table = []
+      {this.state.messages.map(function(object, i){
+        console.log(object);
+        table.push(<div key={i}> {object} </div>);
+      })}
+      return table;
+    }
+
+    handleClick = () =>
+    {
+      this.state.ws.send(this.state.toSend); 
+    }
+
 
   render(){
-      // <ChildComponent websocket={this.ws} />
-      return (<div></div>);
+      return (<div>
+        {this.handleStateDisplay()}
+        <button onClick={(i) => this.handleClick(i)}>Click to send</button>
+        <input select="select" type="text" className="textbox" value={this.state.toSend} placeholder="What you will like to send" />
+      </div>);
   }
 }
 
