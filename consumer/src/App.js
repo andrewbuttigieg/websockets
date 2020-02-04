@@ -12,7 +12,8 @@ class WebSocketListener extends Component {
 
       this.state = {
           ws: null,
-          messages: []
+          messages: [],
+          toSend:''
       };
   }
 
@@ -64,7 +65,7 @@ class WebSocketListener extends Component {
 
         ws.onmessage = messageEvent => {
           //console.log(messageEvent.data)
-          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data)})
+          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data, toSend: this.state.toSend)})
           console.log(this.state.messages);
         }
 
@@ -99,15 +100,25 @@ class WebSocketListener extends Component {
 
     handleClick = () =>
     {
+      console.log(this.state.toSend);
       this.state.ws.send(this.state.toSend); 
     }
 
+    updateInputValue = (evt) => {
+      this.setState({
+        toSend: evt.target.value,
+        ws: this.state.ws,
+        message: this.state.messages
+      });
+    }
 
   render(){
       return (<div>
-        {this.handleStateDisplay()}
+        <div className="chattextlist">
+          {this.handleStateDisplay()}
+        </div>
         <button onClick={(i) => this.handleClick(i)}>Click to send</button>
-        <input select="select" type="text" className="textbox" value={this.state.toSend} placeholder="What you will like to send" />
+        <input select="select" type="text" className="textbox" value={this.state.toSend} onChange={this.updateInputValue} placeholder="What you will like to send" />
       </div>);
   }
 }
