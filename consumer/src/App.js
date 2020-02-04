@@ -65,8 +65,7 @@ class WebSocketListener extends Component {
 
         ws.onmessage = messageEvent => {
           //console.log(messageEvent.data)
-          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data, toSend: this.state.toSend)})
-          console.log(this.state.messages);
+          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data), toSend: this.state.toSend})
         }
 
         // websocket onerror event listener
@@ -92,7 +91,6 @@ class WebSocketListener extends Component {
     handleStateDisplay = () => {
       let table = []
       {this.state.messages.map(function(object, i){
-        console.log(object);
         table.push(<div key={i}> {object} </div>);
       })}
       return table;
