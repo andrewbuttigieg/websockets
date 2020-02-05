@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react'
 
@@ -12,7 +11,8 @@ class WebSocketListener extends Component {
 
       this.state = {
           ws: null,
-          messages: []
+          messages: [],
+          toSend:''
       };
   }
 
@@ -64,8 +64,7 @@ class WebSocketListener extends Component {
 
         ws.onmessage = messageEvent => {
           //console.log(messageEvent.data)
-          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data)})
-          console.log(this.state.messages);
+          this.setState({ws:this.state.ws, message: this.state.messages.push(messageEvent.data), toSend: this.state.toSend})
         }
 
         // websocket onerror event listener
@@ -90,24 +89,34 @@ class WebSocketListener extends Component {
 
     handleStateDisplay = () => {
       let table = []
-      {this.state.messages.map(function(object, i){
-        console.log(object);
+      this.state.messages.map(function(object, i){
         table.push(<div key={i}> {object} </div>);
-      })}
+        return null;
+      })
       return table;
     }
 
     handleClick = () =>
     {
+      console.log(this.state.toSend);
       this.state.ws.send(this.state.toSend); 
     }
 
+    updateInputValue = (evt) => {
+      this.setState({
+        toSend: evt.target.value,
+        ws: this.state.ws,
+        message: this.state.messages
+      });
+    }
 
   render(){
       return (<div>
-        {this.handleStateDisplay()}
+        <div className="chattextlist">
+          {this.handleStateDisplay()}
+        </div>
         <button onClick={(i) => this.handleClick(i)}>Click to send</button>
-        <input select="select" type="text" className="textbox" value={this.state.toSend} placeholder="What you will like to send" />
+        <input select="select" type="text" className="textbox" value={this.state.toSend} onChange={this.updateInputValue} placeholder="What you will like to send" />
       </div>);
   }
 }

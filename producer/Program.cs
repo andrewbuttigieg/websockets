@@ -22,7 +22,7 @@ namespace producer
     {
       var msg = e.Data == "BALUS"
                 ? "I've been balused already..."
-                : "I'm not available now.";
+                : e.Data;
 
       Send (msg);
     }
