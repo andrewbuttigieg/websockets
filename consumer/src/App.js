@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Component } from 'react'
 
@@ -90,9 +89,10 @@ class WebSocketListener extends Component {
 
     handleStateDisplay = () => {
       let table = []
-      {this.state.messages.map(function(object, i){
+      this.state.messages.map(function(object, i){
         table.push(<div key={i}> {object} </div>);
-      })}
+        return null;
+      })
       return table;
     }
 
