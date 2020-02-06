@@ -1,0 +1,18 @@
+version: '3.4'  
+  
+services:  
+  producer:  
+    build:  
+      context: .  
+      dockerfile: producer/Dockerfile  
+    ports:  
+      - "8080:8080"  
+  consumer:
+    build:  
+      context: .  
+      dockerfile: consumer/Dockerfile  
+    volumes:
+    - './consumer:/app'
+    - '/app/node_modules'
+    ports:  
+      - "3000:3000"  

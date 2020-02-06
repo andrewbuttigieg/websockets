@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -6,13 +8,32 @@ namespace producer
 {
     class Program
     {
+        private static readonly AutoResetEvent closing = new AutoResetEvent(false);
+        private static WebSocketServer webSocketServer = null;
+        
         static void Main(string[] args)
         {
-            var wssv = new WebSocketServer (8080, false);
-            wssv.AddWebSocketService<Laputa> ("/Laputa");
-            wssv.Start ();
-            Console.ReadKey (true);
-            wssv.Stop ();
+            webSocketServer = new WebSocketServer (8080, false);
+            webSocketServer.AddWebSocketService<Laputa> ("/Laputa");
+            webSocketServer.WaitTime = TimeSpan.FromMinutes(5);
+            webSocketServer.Start ();
+
+             Task.Factory.StartNew(() => {
+              while (true)
+              {
+                Console.WriteLine(DateTime.Now.ToString());
+                Thread.Sleep(1000 * 60);
+              }
+            });
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(OnExit);
+            closing.WaitOne();
+        }
+
+        protected static void OnExit(object sender, ConsoleCancelEventArgs args)
+        {
+          Console.WriteLine("Exit");
+          closing.Set();
+          webSocketServer.Stop ();
         }
     }
 
@@ -23,7 +44,7 @@ namespace producer
       var msg = e.Data == "BALUS"
                 ? "I've been balused already..."
                 : e.Data;
-
+      Console.WriteLine(msg);
       Send (msg);
     }
   }
