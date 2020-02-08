@@ -21,7 +21,7 @@ jobs:
       working-directory: ./consumer
     - run: npm run build --if-present
       working-directory: ./consumer
-#    - run: npm test
-#      working-directory: ./consumer
+    - run: npm test
+      working-directory: ./consumer
       env:
         CI: true
